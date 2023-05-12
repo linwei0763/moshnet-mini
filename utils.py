@@ -59,11 +59,14 @@ def augmentate_l1l2(fn, pc):
         pc_new[:, 0:3] = pc_new[:, 0:3]/trans[3]
         trans[4] = rd.uniform(0, 360)/180*np.pi
         R = np.array([[np.cos(trans[4]),-np.sin(trans[4]),0], [np.sin(trans[4]),np.cos(trans[4]),0], [0,0,1]])
+        pc_new[:, 0:3] = np.dot(R, pc_new[:, 0:3].T).T
         trans[5] = max(abs(pc_new[:, 3]))
         pc_new[:, 3] = pc_new[:, 3]/trans[5]
-        pc_new[:, 0:3] = np.dot(R, pc_new[:, 0:3].T).T        
+        trans_str = str(trans[0])
+        for j in range(1, len(trans)):
+            trans_str += " " + str(trans[j])
         with open(fn_record, 'a+') as f:
-            f.write(fn + '-' + str(i) + '.txt' + ' ' + str(trans) + '\n')
+            f.write(fn + '-' + str(i) + '.txt' + ' ' + trans_str + '\n')
 
         pc_new = pd.DataFrame(pc_new, columns=['x', 'y', 'z', 'i', 'l'])
         pc_new.to_csv(path_l2 + '/' + fn + '-' + str(i) + '.txt', sep=' ', header=None, index=None)
