@@ -16,15 +16,15 @@ import pandas as pd
 #%%
 
 
-def calibrate_intensity(pc):
+# def calibrate_intensity(pc):
     
-    # pc = np.asarray(pc)
-    # pc[:, 3] = pc[:, 3] - np.mean(pc[:, 3])
-    # pc[:, 3] = 1/(1+np.exp(-pc[:, 3]))
-    # pc[:, 3] = pc[:, 3]/max(abs(pc[:, 3]))
-    # pc = pd.DataFrame(pc)
+#     pc = np.asarray(pc)
+#     pc[:, 3] = pc[:, 3] - np.mean(pc[:, 3])
+#     pc[:, 3] = 1/(1+np.exp(-pc[:, 3]))
+#     pc[:, 3] = pc[:, 3]/max(abs(pc[:, 3]))
+#     pc = pd.DataFrame(pc)
     
-    return pc
+#     return pc
 
 
 
@@ -32,9 +32,13 @@ def calibrate_intensity(pc):
 
 def augmentate_l1l2(fn, pc):
     
-    fn_record = 'record_l1l2.txt'
-    path_l1 = '../l1'
-    path_l2 = '../l2'
+    fn_record = 'data/record_l1l2.txt'
+    path_l1 = 'data/l1'
+    if not os.path.exists(path_l1):
+        os.mkdir(path_l1)
+    path_l2 = 'data/l2'
+    if not os.path.exists(path_l2):
+        os.mkdir(path_l2)
     num_max = 12
     num_sample = 8192
     
@@ -75,8 +79,12 @@ def augmentate_l1l2(fn, pc):
 
 def split_set(fns):
     
-    path_l2 = '../l2'
-    path_split = '../split-l1l2/'
+    path_l2 = 'data/l2'
+    if not os.path.exists(path_l2):
+        os.mkdir(path_l2)
+    path_split = 'data/split-l1l2'
+    if not os.path.exists(path_split):
+        os.mkdir(path_split)
     fn_set_train = 'set_train.txt'
     fn_set_test = 'set_test.txt'
     
@@ -98,12 +106,12 @@ def split_set(fns):
     
     for i in range(len(fns_l2)):
         fn_pre = fns_l2[i].rsplit('-', 1)[0] + '.txt'
-        print(fn_pre)
+        
         if fn_pre in fns_train:
-            with open(path_split + fn_set_train, 'a+') as f:
+            with open(path_split + '/' + fn_set_train, 'a+') as f:
                 f.write(fns_l2[i] + '\n')
         if fn_pre in fns_test:
-            with open(path_split + fn_set_test, 'a+') as f:
+            with open(path_split + '/' + fn_set_test, 'a+') as f:
                 f.write(fns_l2[i] + '\n')
         
                 
@@ -120,15 +128,14 @@ def split_set(fns):
 
 if __name__ == '__main__':
     
-    path_raw_l2 = '../raw/l2'
-    path_l2 = '../l2'
+    path_l2_raw = 'data/l2-raw'
     
-    fns = os.listdir(path_raw_l2)
+    fns = os.listdir(path_l2_raw)
     
-    # for fn in fns:
-    #     pc = pd.read_csv(path_raw_l2 + '/' + fn, sep=' ', header=None, names=['x', 'y', 'z', 'i', 'l'])
-    #     # pc = calibrate_intensity(pc)
-    #     augmentate_l1l2(fn, pc)
+    for fn in fns:
+        pc = pd.read_csv(path_l2_raw + '/' + fn, sep=' ', header=None, names=['x', 'y', 'z', 'i', 'l'])
+        # pc = calibrate_intensity(pc)
+        augmentate_l1l2(fn, pc)
     
     split_set(fns)
     
