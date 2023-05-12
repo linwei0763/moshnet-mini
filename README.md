@@ -1,4 +1,4 @@
-# moshnet-mini
+# MoshNet-mini
 
 MoshNet-mini is composed of point clouds in 1-1 and 2-5 of MoshNet.
 
